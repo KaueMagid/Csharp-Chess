@@ -1,4 +1,5 @@
 ﻿using System;
+using board;
 
 namespace Chess
 {
@@ -6,7 +7,9 @@ namespace Chess
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Board tab = new Board(8, 8);
+            Screm.printBoard(tab);
+            
         }
     }
 }
