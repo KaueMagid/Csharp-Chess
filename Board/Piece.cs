@@ -8,6 +8,12 @@ namespace board
         public int MovesCount { get; protected set; }
         public Board Board { get; protected set; }
 
-
+        public Piece(Board board, Color color )
+        {
+            Position = null;
+            Color = color;
+            MovesCount = 0;
+            Board = board;
+        }
     }
 }

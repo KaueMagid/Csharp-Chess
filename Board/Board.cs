@@ -14,9 +14,15 @@ namespace board
             Pieces = new Piece[lines, colums]; 
         }
 
-        public Piece piece(int line, int colum)
+        public Piece Piece(int line, int colum)
         {
             return Pieces[line, colum];
+        }
+
+        public void InputPiece(Piece p, Position pos)
+        {
+            Pieces[pos.Line, pos.Colum] = p;
+            p.Position = pos;
         }
     }
 }
