@@ -8,21 +8,15 @@ namespace Chess
     {
         static void Main(string[] args)
         {
-            try
-            {
-                Board tab = new Board(8, 8);
-                tab.InputPiece(new King(tab, Color.Black), new Position(0, 0));
-                tab.InputPiece(new Queen(tab, Color.Black), new Position(0, 1));
-                tab.InputPiece(new Bishop(tab, Color.Black), new Position(0, 2));
-                tab.InputPiece(new Knight(tab, Color.Black), new Position(0, 3));
-                tab.InputPiece(new Tower(tab, Color.Black), new Position(0, 4));
-                tab.InputPiece(new Pawn(tab, Color.Black), new Position(0, 9));
-                Screm.printBoard(tab);
-            }
-            catch(BoardException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            ChessPosition pos = new ChessPosition('a', 1);
+            ChessPosition pos2 = new ChessPosition('c', 3);
+
+            Console.WriteLine(pos);
+            Console.WriteLine(pos2);
+            Console.WriteLine();
+            Console.WriteLine(pos.toPosition());
+            Console.WriteLine(pos2.toPosition());
+
         }
     }
 }
