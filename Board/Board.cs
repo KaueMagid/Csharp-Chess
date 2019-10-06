@@ -39,6 +39,22 @@ namespace board
             p.Position = pos;
         }
 
+        public Piece OutputPiece(Position pos)
+        {
+            if(Piece(pos) == null)
+            {
+                return null;
+            }
+            Piece aux = Piece(pos);
+            aux.Position = null;
+            Pieces[pos.Line, pos.Colum] = null;
+            return aux;
+        }
+
+
+
+
+
         public bool ValidPosition(Position pos)
         {
             if (pos.Line < 0 || pos.Line >= Lines ||pos.Colum < 0 ||pos.Colum >= Colums)
