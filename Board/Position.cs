@@ -11,6 +11,12 @@
             Colum = colum;
         }
 
+        public void changeValues(int line, int colum)
+        {
+            Line = line;
+            Colum = colum;
+        }
+
         public override string ToString()
         {
             return Line + "," + Colum;

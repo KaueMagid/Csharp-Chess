@@ -16,12 +16,17 @@ namespace Chess
                     Console.Clear();
                     Screm.printBoard(math.ChessBoard);
                     Console.WriteLine($"\n\nTunr: {math.Turn}");
-                    Console.WriteLine("\n"+ math.PlayerColor + "player is your turn");
+                    Console.WriteLine("\n"+ math.PlayerColor + " player is your turn");
                     Console.Write("Origin:");
-                    ChessPosition origin = Screm.ReadPositon();
-                    Console.Write("Destiny:");
-                    ChessPosition destiny = Screm.ReadPositon();
-                    math.Move(origin.toPosition(), destiny.toPosition());
+                    Position origin = Screm.ReadPositon().toPosition();
+
+                    bool[,] validMove = math.ChessBoard.Piece(origin).ValidMoves();
+                    Console.Clear();
+                    Screm.printBoard(math.ChessBoard,validMove);
+
+                    Console.Write("\nDestiny:");
+                    Position destiny = Screm.ReadPositon().toPosition();
+                    math.Move(origin, destiny);
 
                 }
 

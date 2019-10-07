@@ -1,7 +1,7 @@
 ﻿
 namespace board
 {
-    class Piece
+    abstract class Piece
     {
         public Position Position { get; set; }
         public Color Color { get; protected set; }
@@ -19,7 +19,15 @@ namespace board
 
         public void incrementMove()
         {
-            MovesCount += 1;
+            MovesCount ++;
+        }
+
+        public abstract bool[,] ValidMoves();
+
+        protected bool CanMove(Position pos)
+        {
+            Piece p = Board.Piece(pos);
+            return p == null || p.Color != Color;
         }
     }
 }

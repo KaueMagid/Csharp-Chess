@@ -21,11 +21,11 @@ namespace chessGame
             InputPieces();
         }
 
-        public void Move(Position origin, Position destini)
+        public void Move(Position origin, Position destiny)
         {
             Piece p = ChessBoard.OutputPiece(origin);
-            Piece capturePiece = ChessBoard.OutputPiece(destini);
-            ChessBoard.InputPiece(p, destini);
+            Piece capturePiece = ChessBoard.OutputPiece(destiny);
+            ChessBoard.InputPiece(p, destiny);
             p.incrementMove();
         }
 
@@ -39,7 +39,10 @@ namespace chessGame
             ChessBoard.InputPiece(new Bishop(ChessBoard, Color.White), new ChessPosition('f', 1).toPosition());
             ChessBoard.InputPiece(new Knight(ChessBoard, Color.White), new ChessPosition('g', 1).toPosition());
             ChessBoard.InputPiece(new Tower(ChessBoard, Color.White), new ChessPosition('h', 1).toPosition());
-
+            for (char i = 'a'; i <= 'h'; i++)
+            {
+                ChessBoard.InputPiece(new Pawn(ChessBoard, Color.White), new ChessPosition(i, 2).toPosition());
+            }
 
             ChessBoard.InputPiece(new Tower(ChessBoard, Color.Black), new ChessPosition('a', 8).toPosition());
             ChessBoard.InputPiece(new Knight(ChessBoard, Color.Black), new ChessPosition('b', 8).toPosition());
@@ -49,7 +52,11 @@ namespace chessGame
             ChessBoard.InputPiece(new Bishop(ChessBoard, Color.Black), new ChessPosition('f', 8).toPosition());
             ChessBoard.InputPiece(new Knight(ChessBoard, Color.Black), new ChessPosition('g', 8).toPosition());
             ChessBoard.InputPiece(new Tower(ChessBoard, Color.Black), new ChessPosition('h', 8).toPosition());
-
+            
+            for (char i = 'a'; i <= 'h'; i++)
+            {
+                ChessBoard.InputPiece(new Pawn(ChessBoard, Color.Black), new ChessPosition(i, 7).toPosition());
+            }
         }
     }
 }
