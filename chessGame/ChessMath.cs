@@ -21,12 +21,54 @@ namespace chessGame
             InputPieces();
         }
 
-        public void Move(Position origin, Position destiny)
+        private void Move(Position origin, Position destiny)
         {
             Piece p = ChessBoard.OutputPiece(origin);
             Piece capturePiece = ChessBoard.OutputPiece(destiny);
             ChessBoard.InputPiece(p, destiny);
             p.incrementMove();
+        }
+
+        public void MakePlay(Position origin, Position destiny)
+        {
+            Move(origin, destiny);
+            Turn++;
+            ChangePlayer();
+        }
+
+        public void ValidateOriginPosition(Position pos)
+        {
+            if (ChessBoard.Piece(pos) == null)
+            {
+                throw new BoardException("Don't exist piece in this position");
+            }
+            if(PlayerColor != ChessBoard.Piece(pos).Color)
+            {
+                throw new BoardException("it's not your turn");
+            }
+            if (!ChessBoard.Piece(pos).ExistValidMove())
+            {
+                throw new BoardException("This piece has no valid moves");
+            }
+
+        }
+        public void ValidateDestinyPosition(Position origin , Position destiny)
+        {
+            if (!ChessBoard.Piece(origin).ValidateMove(destiny))
+            {
+                throw new BoardException("Invalid destiny position");
+            }
+        }
+        private void ChangePlayer()
+        {
+            if (PlayerColor == Color.White)
+            {
+                PlayerColor = Color.Black;
+            }
+            else
+            {
+                PlayerColor = Color.White;
+            }
         }
 
         private void InputPieces()

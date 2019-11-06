@@ -13,21 +13,32 @@ namespace Chess
                 ChessMath math = new ChessMath();
                 while (!math.Finish)
                 {
-                    Console.Clear();
-                    Screm.printBoard(math.ChessBoard);
-                    Console.WriteLine($"\n\nTunr: {math.Turn}");
-                    Console.WriteLine("\n"+ math.PlayerColor + " player is your turn");
-                    Console.Write("Origin:");
-                    Position origin = Screm.ReadPositon().toPosition();
+                    try
+                    {
+                        Console.Clear();
+                        Screm.printBoard(math.ChessBoard);
+                        Console.WriteLine($"\n\nTunr: {math.Turn}");
+                        Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
+                        Console.Write("Origin:");
+                        Position origin = Screm.ReadPositon().toPosition();
+                        Console.WriteLine();
+                        math.ValidateOriginPosition(origin);
 
-                    bool[,] validMove = math.ChessBoard.Piece(origin).ValidMoves();
-                    Console.Clear();
-                    Screm.printBoard(math.ChessBoard,validMove);
+                        bool[,] validMove = math.ChessBoard.Piece(origin).ValidMoves();
+                        Console.Clear();
+                        Screm.printBoard(math.ChessBoard, validMove);
 
-                    Console.Write("\nDestiny:");
-                    Position destiny = Screm.ReadPositon().toPosition();
-                    math.Move(origin, destiny);
+                        Console.Write("\nDestiny:");
+                        Position destiny = Screm.ReadPositon().toPosition();
+                        math.ValidateDestinyPosition(origin, destiny);
 
+                        math.MakePlay(origin, destiny);
+                    }
+                    catch(BoardException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.ReadLine();
+                    }
                 }
 
             }
