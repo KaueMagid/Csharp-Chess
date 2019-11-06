@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace board
 {
     abstract class Piece
@@ -49,6 +51,11 @@ namespace board
         {
             Piece p = Board.Piece(pos);
             return p == null || p.Color != Color;
+        }
+
+        internal void decrementMove()
+        {
+            MovesCount--;
         }
     }
 }

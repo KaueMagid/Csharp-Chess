@@ -16,13 +16,14 @@ namespace Chess
                     try
                     {
                         Screm.printMath(math);
+                        Console.Write("Origin:");
                         Position origin = Screm.ReadPositon().toPosition();
                         Console.WriteLine();
                         math.ValidateOriginPosition(origin);
 
                         bool[,] validMove = math.ChessBoard.Piece(origin).ValidMoves();
                         Console.Clear();
-                        Screm.printBoard(math.ChessBoard, validMove);
+                        Screm.printMath(math, validMove);
 
                         Console.Write("\nDestiny:");
                         Position destiny = Screm.ReadPositon().toPosition();
@@ -30,7 +31,7 @@ namespace Chess
 
                         math.MakePlay(origin, destiny);
                     }
-                    catch(BoardException e)
+                    catch (BoardException e)
                     {
                         Console.WriteLine(e.Message);
                         Console.ReadLine();
@@ -38,7 +39,7 @@ namespace Chess
                 }
 
             }
-            catch(BoardException e)
+            catch (BoardException e)
             {
                 Console.WriteLine(e.Message);
             }

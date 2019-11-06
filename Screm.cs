@@ -14,10 +14,25 @@ namespace Chess
             printCapturedPieces(math);
             Console.WriteLine($"\n\nTunr: {math.Turn}");
             Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
-            Console.Write("Origin:");
+            if (math.Xeque)
+            {
+                Console.WriteLine("XEQUE!");
+            }
 
         }
+        public static void printMath(ChessMath math,bool[,] validMoves)
+        {
+            Console.Clear();
+            printBoard(math.ChessBoard,validMoves);
+            printCapturedPieces(math);
+            Console.WriteLine($"\n\nTunr: {math.Turn}");
+            Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
+            if (math.Xeque)
+            {
+                Console.WriteLine("XEQUE!");
+            }
 
+        }
         public static void printCapturedPieces(ChessMath math)
         {
             Console.WriteLine("\nCaptured Pieces:");
@@ -33,22 +48,32 @@ namespace Chess
         public static void printConjunto(HashSet<Piece> conjunto)
         {
             Console.Write("[");
+            bool bcks = false;
             foreach (Piece item in conjunto)
             {
                 Console.Write(item + " ");
+                bcks = true;
             }
-            Console.Write("]");
+            if (bcks)
+            {
+                Console.Write("\b]");
+            }
+            else
+            {
+                Console.Write("]");
+            }
+            
         }
         public static void printBoard(Board board)
         {
             for (int i = 0; i < board.Lines; i++)
             {
-                Console.Write($"{8-i} ");
+                Console.Write($"{8 - i} ");
                 for (int j = 0; j < board.Colums; j++)
                 {
-                    PrintPiece(board.Piece(i,j));
-                    
-                    
+                    PrintPiece(board.Piece(i, j));
+
+
                 }
                 Console.WriteLine();
             }
@@ -65,7 +90,7 @@ namespace Chess
                 Console.Write($"{8 - i} ");
                 for (int j = 0; j < board.Colums; j++)
                 {
-                    if (validMoves[i,j] == true)
+                    if (validMoves[i, j] == true)
                     {
                         Console.BackgroundColor = backgroundE;
                     }
@@ -104,9 +129,14 @@ namespace Chess
         public static ChessPosition ReadPositon()
         {
             string s = Console.ReadLine();
-            char colum = s[0];
-            int line = int.Parse(s[1] + "");
-            return new ChessPosition(colum, line);
+            try
+            {
+                char colum = s[0];
+                int line = int.Parse(s[1] + "");
+                return new ChessPosition(colum, line);
+            }
+            catch { throw new BoardException("Invalid Move"); }
+            
         }
     }
 }

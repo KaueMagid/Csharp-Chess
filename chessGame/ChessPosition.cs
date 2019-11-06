@@ -17,7 +17,11 @@ namespace chessGame
         }
         public Position toPosition()
         {
-            return new Position(8 - Line, Colum - 'a');
+            if (Line <= 8 && Colum <= 'h')
+            {
+                return new Position(8 - Line, Colum - 'a');
+            }
+            throw new BoardException("Invalid Move!");
         }
         public override string ToString()
         {

@@ -11,6 +11,7 @@ namespace chessGame
         public int Turn { get; private set; }
         public Color PlayerColor { get; private set; }
         public bool Finish { get; private set; }
+        public bool Xeque { get; private set; }
         private HashSet<Piece> Pieces;
         private HashSet<Piece> Captured;
         public ChessMath()
@@ -19,30 +20,31 @@ namespace chessGame
             Turn = 1;
             PlayerColor = Color.White;
             Finish = false;
+            Xeque = false;
             Pieces = new HashSet<Piece>();
             Captured = new HashSet<Piece>();
             InputPieces();
         }
 
-        private void Move(Position origin, Position destiny)
-        {
-            Piece p = ChessBoard.OutputPiece(origin);
-            Piece capturedPiece = ChessBoard.OutputPiece(destiny);
-            ChessBoard.InputPiece(p, destiny);
-            p.incrementMove();
-            if (capturedPiece != null)
-            {
-                Captured.Add(capturedPiece);
-            }
-        }
-
         public void MakePlay(Position origin, Position destiny)
         {
-            Move(origin, destiny);
+            Piece p = Move(origin, destiny);
+            if (InXeque(PlayerColor))
+            {
+                ReverseMove(origin, destiny, p);
+                throw new BoardException("You can't move this piece, you in xeque");
+            }
+            if (InXeque(Adversary(PlayerColor)))
+            {
+                Xeque = true;
+            }
+            else
+            {
+                Xeque = false;
+            }
             Turn++;
             ChangePlayer();
         }
-
         public void ValidateOriginPosition(Position pos)
         {
             if (ChessBoard.Piece(pos) == null)
@@ -66,7 +68,6 @@ namespace chessGame
                 throw new BoardException("Invalid destiny position");
             }
         }
-
         public HashSet<Piece> CapturedPieces(Color color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
@@ -91,6 +92,63 @@ namespace chessGame
             }
             aux.ExceptWith(CapturedPieces(color));
             return aux;
+        }
+        public bool InXeque(Color color)
+        {
+            Piece king = King(color);
+            foreach (Piece item in PiecesInGame(Adversary(color)))
+            {
+                if (item.ValidMoves()[king.Position.Line, king.Position.Colum])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private Piece King(Color color)
+        {
+            foreach (Piece item in PiecesInGame(color))
+            {
+                if (item is King)
+                {
+                    return item;
+                }
+            }
+            throw new BoardException("Not King");
+        }
+        private Color Adversary(Color color)
+        {
+            if (color == Color.Black)
+            {
+                return Color.White;
+            }
+            else
+            {
+                return Color.Black;
+            }
+        }
+        private Piece Move(Position origin, Position destiny)
+        {
+            Piece p = ChessBoard.OutputPiece(origin);
+            Piece capturedPiece = ChessBoard.OutputPiece(destiny);
+            ChessBoard.InputPiece(p, destiny);
+            p.incrementMove();
+            if (capturedPiece != null)
+            {
+                Captured.Add(capturedPiece);
+            }
+            return capturedPiece;
+        }
+        private void ReverseMove(Position origin, Position destiny, Piece piece)
+        {
+            Piece p = ChessBoard.OutputPiece(destiny);
+            ChessBoard.InputPiece(p, origin);
+            p.decrementMove();
+            if (piece != null)
+            {
+                ChessBoard.InputPiece(piece, destiny);
+                Captured.Remove(piece);
+            }
         }
         private void ChangePlayer()
         {
