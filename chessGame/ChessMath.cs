@@ -11,7 +11,7 @@ namespace chessGame
         public int Turn { get; private set; }
         public Color PlayerColor { get; private set; }
         public bool Finish { get; private set; }
-        public bool Xeque { get; private set; }
+        public bool Check { get; private set; }
         private HashSet<Piece> Pieces;
         private HashSet<Piece> Captured;
         public ChessMath()
@@ -20,7 +20,7 @@ namespace chessGame
             Turn = 1;
             PlayerColor = Color.White;
             Finish = false;
-            Xeque = false;
+            Check = false;
             Pieces = new HashSet<Piece>();
             Captured = new HashSet<Piece>();
             InputPieces();
@@ -29,21 +29,29 @@ namespace chessGame
         public void MakePlay(Position origin, Position destiny)
         {
             Piece p = Move(origin, destiny);
-            if (InXeque(PlayerColor))
+            if (InCheck(PlayerColor))
             {
                 ReverseMove(origin, destiny, p);
                 throw new BoardException("You can't move this piece, you in xeque");
             }
-            if (InXeque(Adversary(PlayerColor)))
+            if (InCheck(Adversary(PlayerColor)))
             {
-                Xeque = true;
+                Check = true;
             }
             else
             {
-                Xeque = false;
+                Check = false;
             }
-            Turn++;
-            ChangePlayer();
+            if (CheckMate(Adversary(PlayerColor)))
+            {
+                Finish = true;
+            }
+            else
+            {
+                Turn++;
+                ChangePlayer();
+            }
+
         }
         public void ValidateOriginPosition(Position pos)
         {
@@ -93,7 +101,7 @@ namespace chessGame
             aux.ExceptWith(CapturedPieces(color));
             return aux;
         }
-        public bool InXeque(Color color)
+        private bool InCheck(Color color)
         {
             Piece king = King(color);
             foreach (Piece item in PiecesInGame(Adversary(color)))
@@ -104,6 +112,36 @@ namespace chessGame
                 }
             }
             return false;
+        }
+        private bool CheckMate(Color color)
+        {
+            if (!InCheck(color))
+            {
+                return false;
+            }
+            foreach (Piece x in PiecesInGame(color))
+            {
+                bool[,] mat = x.ValidMoves();
+                for (int i = 0; i < ChessBoard.Lines; i++)
+                {
+                    for (int j = 0; j < ChessBoard.Colums; j++)
+                    {
+                        if (mat[i, j])
+                        {
+                            Position destiny = new Position(i, j);
+                            Position origin = x.Position;
+                            Piece p = Move(origin, destiny);
+                            bool checkTest = InCheck(color);
+                            ReverseMove(origin, destiny, p);
+                            if (!checkTest)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
         private Piece King(Color color)
         {

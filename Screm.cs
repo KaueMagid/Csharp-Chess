@@ -14,7 +14,7 @@ namespace Chess
             printCapturedPieces(math);
             Console.WriteLine($"\n\nTunr: {math.Turn}");
             Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
-            if (math.Xeque)
+            if (math.Check)
             {
                 Console.WriteLine("XEQUE!");
             }
@@ -27,7 +27,7 @@ namespace Chess
             printCapturedPieces(math);
             Console.WriteLine($"\n\nTunr: {math.Turn}");
             Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
-            if (math.Xeque)
+            if (math.Check)
             {
                 Console.WriteLine("XEQUE!");
             }

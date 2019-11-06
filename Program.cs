@@ -22,7 +22,6 @@ namespace Chess
                         math.ValidateOriginPosition(origin);
 
                         bool[,] validMove = math.ChessBoard.Piece(origin).ValidMoves();
-                        Console.Clear();
                         Screm.printMath(math, validMove);
 
                         Console.Write("\nDestiny:");
@@ -37,6 +36,9 @@ namespace Chess
                         Console.ReadLine();
                     }
                 }
+                Screm.printMath(math);
+                Console.WriteLine("\nCHECKMATE!");
+                Console.WriteLine(math.PlayerColor + " Wins");
 
             }
             catch (BoardException e)
