@@ -15,11 +15,7 @@ namespace Chess
                 {
                     try
                     {
-                        Console.Clear();
-                        Screm.printBoard(math.ChessBoard);
-                        Console.WriteLine($"\n\nTunr: {math.Turn}");
-                        Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
-                        Console.Write("Origin:");
+                        Screm.printMath(math);
                         Position origin = Screm.ReadPositon().toPosition();
                         Console.WriteLine();
                         math.ValidateOriginPosition(origin);

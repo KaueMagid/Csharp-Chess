@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using board;
 using chessGame;
 
@@ -6,6 +7,38 @@ namespace Chess
 {
     class Screm
     {
+        public static void printMath(ChessMath math)
+        {
+            Console.Clear();
+            printBoard(math.ChessBoard);
+            printCapturedPieces(math);
+            Console.WriteLine($"\n\nTunr: {math.Turn}");
+            Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
+            Console.Write("Origin:");
+
+        }
+
+        public static void printCapturedPieces(ChessMath math)
+        {
+            Console.WriteLine("\nCaptured Pieces:");
+            Console.Write("\nWhite:");
+            printConjunto(math.CapturedPieces(Color.White));
+            ConsoleColor aux = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("\nBlack:");
+            printConjunto(math.CapturedPieces(Color.Black));
+            Console.ForegroundColor = aux;
+        }
+
+        public static void printConjunto(HashSet<Piece> conjunto)
+        {
+            Console.Write("[");
+            foreach (Piece item in conjunto)
+            {
+                Console.Write(item + " ");
+            }
+            Console.Write("]");
+        }
         public static void printBoard(Board board)
         {
             for (int i = 0; i < board.Lines; i++)
