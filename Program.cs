@@ -37,8 +37,7 @@ namespace Chess
                     }
                 }
                 Screm.printMath(math);
-                Console.WriteLine("\nCHECKMATE!");
-                Console.WriteLine(math.PlayerColor + " Wins");
+                
 
             }
             catch (BoardException e)

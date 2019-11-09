@@ -175,6 +175,24 @@ namespace chessGame
             {
                 Captured.Add(capturedPiece);
             }
+            //Special Move - Small Rock
+            if(p is King && destiny.Colum == origin.Colum + 2)
+            {
+                Position pos = new Position(origin.Line, origin.Colum + 3);
+                Piece t = ChessBoard.OutputPiece(pos);
+                t.incrementMove();
+                pos.changeValues(origin.Line, origin.Colum + 1);
+                ChessBoard.InputPiece(t, pos);
+            }
+            //Special Move - Small Rock
+            if (p is King && destiny.Colum == origin.Colum - 2)
+            {
+                Position pos = new Position(origin.Line, origin.Colum - 4);
+                Piece t = ChessBoard.OutputPiece(pos);
+                t.incrementMove();
+                pos.changeValues(origin.Line, origin.Colum - 1);
+                ChessBoard.InputPiece(t, pos);
+            }
             return capturedPiece;
         }
         private void ReverseMove(Position origin, Position destiny, Piece piece)
@@ -186,6 +204,24 @@ namespace chessGame
             {
                 ChessBoard.InputPiece(piece, destiny);
                 Captured.Remove(piece);
+            }
+            //Special Move - Small Rock
+            if (p is King && destiny.Colum == origin.Colum + 2)
+            {
+                Position pos = new Position(origin.Line, origin.Colum + 1);
+                Piece t = ChessBoard.OutputPiece(pos);
+                t.decrementMove();
+                pos.changeValues(origin.Line, origin.Colum + 3);
+                ChessBoard.InputPiece(t, pos);
+            }
+            //Special Move - Small Rock
+            if (p is King && destiny.Colum == origin.Colum - 2)
+            {
+                Position pos = new Position(origin.Line, origin.Colum - 1);
+                Piece t = ChessBoard.OutputPiece(pos);
+                t.decrementMove();
+                pos.changeValues(origin.Line, origin.Colum - 4);
+                ChessBoard.InputPiece(t, pos);
             }
         }
         private void ChangePlayer()
@@ -209,8 +245,8 @@ namespace chessGame
             InputChessPiece(new Tower(ChessBoard, Color.White), 'a', 1);
             InputChessPiece(new Knight(ChessBoard, Color.White), 'b', 1);
             InputChessPiece(new Bishop(ChessBoard, Color.White), 'c', 1);
-            InputChessPiece(new King(ChessBoard, Color.White), 'd', 1);
-            InputChessPiece(new Queen(ChessBoard, Color.White), 'e', 1);
+            InputChessPiece(new Queen(ChessBoard, Color.White), 'd', 1);
+            InputChessPiece(new King(ChessBoard, Color.White,this), 'e', 1);
             InputChessPiece(new Bishop(ChessBoard, Color.White), 'f', 1);
             InputChessPiece(new Knight(ChessBoard, Color.White), 'g', 1);
             InputChessPiece(new Tower(ChessBoard, Color.White), 'h', 1);
@@ -222,8 +258,8 @@ namespace chessGame
             InputChessPiece(new Tower(ChessBoard, Color.Black), 'a', 8);
             InputChessPiece(new Knight(ChessBoard, Color.Black), 'b', 8);
             InputChessPiece(new Bishop(ChessBoard, Color.Black), 'c', 8);
-            InputChessPiece(new King(ChessBoard, Color.Black), 'd', 8);
-            InputChessPiece(new Queen(ChessBoard, Color.Black), 'e', 8);
+            InputChessPiece(new Queen(ChessBoard, Color.Black), 'd', 8);
+            InputChessPiece(new King(ChessBoard, Color.Black,this), 'e', 8);
             InputChessPiece(new Bishop(ChessBoard, Color.Black), 'f', 8);
             InputChessPiece(new Knight(ChessBoard, Color.Black), 'g', 8);
             InputChessPiece(new Tower(ChessBoard, Color.Black), 'h', 8);

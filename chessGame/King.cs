@@ -7,9 +7,10 @@ namespace chessGame
 {
     class King : Piece
     {
-        public King(Board tab, Color color) : base(tab, color)
+        private ChessMath Math;
+        public King(Board tab, Color color, ChessMath math) : base(tab, color)
         {
-
+            Math = math;
         }
 
         public override string ToString()
@@ -17,6 +18,11 @@ namespace chessGame
             return "K";
         }
 
+        private bool TowerforRock(Position pos)
+        {
+            Piece p = Board.Piece(pos);
+            return p != null && p is Tower && p.MovesCount == 0 && p.Color == Color;
+        }
 
         public override bool[,] ValidMoves()
         {
@@ -71,7 +77,38 @@ namespace chessGame
             {
                 mat[pos.Line, pos.Colum] = true;
             }
-
+            //# Special Move #
+            //Smal Rock
+            if (MovesCount == 0 && !Math.Check)
+            {
+                bool aux = true;
+                Position posT = new Position(Position.Line, Position.Colum + 3);
+                for (int i = 1; i <= 2; i++)
+                {
+                    if (Board.Piece(Position.Line, Position.Colum + i) != null) { aux = false; }
+                }
+                if (TowerforRock(posT) && aux)
+                {
+                    pos.changeValues(Position.Line, Position.Colum + 2);
+                    mat[pos.Line, pos.Colum] = true;
+                }
+            }
+            //# Special Move #
+            //Big Rock
+            if (MovesCount == 0 && !Math.Check)
+            {
+                bool aux = true;
+                Position posT = new Position(Position.Line, Position.Colum - 4);
+                for (int i = 1; i <= 3; i++)
+                {
+                    if (Board.Piece(Position.Line, Position.Colum - i) != null) { aux = false; }
+                }
+                if (TowerforRock(posT) && aux)
+                {
+                    pos.changeValues(Position.Line, Position.Colum - 2);
+                    mat[pos.Line, pos.Colum] = true;
+                }
+            }
             return mat;
         }
     }

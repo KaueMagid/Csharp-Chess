@@ -12,11 +12,19 @@ namespace Chess
             Console.Clear();
             printBoard(math.ChessBoard);
             printCapturedPieces(math);
-            Console.WriteLine($"\n\nTunr: {math.Turn}");
-            Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
-            if (math.Check)
+            if (!math.Finish)
             {
-                Console.WriteLine("XEQUE!");
+                Console.WriteLine($"\n\nTunr: {math.Turn}");
+                Console.WriteLine("\n" + math.PlayerColor + " player is your turn");
+                if (math.Check)
+                {
+                    Console.WriteLine("CHECK!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("CHECKMATE!");
+                Console.WriteLine("\n WINS: " + math.PlayerColor);
             }
 
         }
