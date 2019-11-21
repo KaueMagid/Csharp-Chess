@@ -4,9 +4,10 @@ namespace chessGame
 {
     class Pawn : Piece
     {
-        public Pawn(Board tab, Color color) : base(tab, color)
+        ChessMath Math;
+        public Pawn(Board tab, Color color, ChessMath math) : base(tab, color)
         {
-
+            Math = math;
         }
 
         public override string ToString()
@@ -14,7 +15,7 @@ namespace chessGame
             return "P";
         }
 
-        
+
         public override bool[,] ValidMoves()
         {
             bool[,] mat = new bool[Board.Lines, Board.Colums];
@@ -52,6 +53,22 @@ namespace chessGame
                 {
                     mat[pos.Line, pos.Colum] = true;
                 }
+                if (Position.Line == 3)
+                {
+                    Position left = new Position(Position.Line, Position.Colum - 1);
+                    Position right = new Position(Position.Line, Position.Colum + 1);
+                    Piece enPassant = Math.EnPassant;
+                    if(Board.ValidPosition(left) && enPassant!=null && Board.Piece(left)== enPassant)
+                    {
+                        pos.changeValues(Position.Line - 1, Position.Colum - 1);
+                        mat[pos.Line, pos.Colum] = true;
+                    }
+                    if (Board.ValidPosition(right) && enPassant != null && Board.Piece(right) == enPassant)
+                    {
+                        pos.changeValues(Position.Line - 1, Position.Colum + 1);
+                        mat[pos.Line, pos.Colum] = true;
+                    }
+                }
             }
             else
             {
@@ -85,6 +102,22 @@ namespace chessGame
                 if (Board.ValidPosition(pos) && CanMove(pos) && Board.Piece(pos) != null)
                 {
                     mat[pos.Line, pos.Colum] = true;
+                }
+                if (Position.Line == 4)
+                {
+                    Position left = new Position(Position.Line, Position.Colum - 1);
+                    Position right = new Position(Position.Line, Position.Colum + 1);
+                    Piece enPassant = Math.EnPassant;
+                    if (Board.ValidPosition(left) && enPassant != null && Board.Piece(left) == enPassant)
+                    {
+                        pos.changeValues(Position.Line + 1, Position.Colum - 1);
+                        mat[pos.Line, pos.Colum] = true;
+                    }
+                    if (Board.ValidPosition(right) && enPassant != null && Board.Piece(right) == enPassant)
+                    {
+                        pos.changeValues(Position.Line + 1, Position.Colum + 1);
+                        mat[pos.Line, pos.Colum] = true;
+                    }
                 }
             }
             return mat;

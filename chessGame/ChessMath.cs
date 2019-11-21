@@ -12,6 +12,7 @@ namespace chessGame
         public Color PlayerColor { get; private set; }
         public bool Finish { get; private set; }
         public bool Check { get; private set; }
+        public Piece EnPassant { get; private set; }
         private HashSet<Piece> Pieces;
         private HashSet<Piece> Captured;
         public ChessMath()
@@ -23,15 +24,52 @@ namespace chessGame
             Check = false;
             Pieces = new HashSet<Piece>();
             Captured = new HashSet<Piece>();
+            EnPassant = null;
             InputPieces();
         }
 
         public void MakePlay(Position origin, Position destiny)
         {
             Piece p = Move(origin, destiny);
+            bool promo = false;
+            Piece promoAux = null;
+            //Special Move - Promotion
+            if (ChessBoard.Piece(destiny) is Pawn && (destiny.Line == 0 || destiny.Line == 7))
+            {
+                Console.WriteLine("Chose your Promotion:\nb\tn\tq\tt");
+                char chose = char.Parse(Console.ReadLine());
+                Piece promoPiece = null;
+                switch (chose)
+                {
+                    case 'b':
+                        promoPiece = new Bishop(ChessBoard, ChessBoard.Piece(destiny).Color);
+                        break;
+                    case 'n':
+                        promoPiece = new Knight(ChessBoard, ChessBoard.Piece(destiny).Color);
+                        break;
+                    case 'q':
+                        promoPiece = new Queen(ChessBoard, ChessBoard.Piece(destiny).Color);
+                        break;
+                    case 't':
+                        promoPiece = new Tower(ChessBoard, ChessBoard.Piece(destiny).Color);
+                        break;
+                }
+                Pieces.Remove(ChessBoard.Piece(destiny));
+                ChessBoard.OutputPiece(destiny);
+                ChessBoard.InputPiece(promoPiece, destiny);
+                Pieces.Add(promoPiece);
+                promo = true;
+            }
             if (InCheck(PlayerColor))
             {
-                ReverseMove(origin, destiny, p);
+                if (!promo)
+                {
+                    ReverseMove(origin, destiny, p);
+                }
+                else
+                {
+                    ReverseMove(origin, destiny, p, promoAux);
+                }
                 throw new BoardException("You can't move this piece, you in xeque");
             }
             if (InCheck(Adversary(PlayerColor)))
@@ -50,6 +88,15 @@ namespace chessGame
             {
                 Turn++;
                 ChangePlayer();
+                Piece Passant = ChessBoard.Piece(destiny);
+                if (Passant is Pawn && (destiny.Line == origin.Line + 2 || destiny.Line == origin.Line - 2))
+                {
+                    EnPassant = Passant;
+                }
+                else
+                {
+                    EnPassant = null;
+                }
             }
 
         }
@@ -176,7 +223,7 @@ namespace chessGame
                 Captured.Add(capturedPiece);
             }
             //Special Move - Small Rock
-            if(p is King && destiny.Colum == origin.Colum + 2)
+            if (p is King && destiny.Colum == origin.Colum + 2)
             {
                 Position pos = new Position(origin.Line, origin.Colum + 3);
                 Piece t = ChessBoard.OutputPiece(pos);
@@ -193,6 +240,12 @@ namespace chessGame
                 pos.changeValues(origin.Line, origin.Colum - 1);
                 ChessBoard.InputPiece(t, pos);
             }
+            //Special Move - En Passant
+            if (p is Pawn && origin.Colum != destiny.Colum && capturedPiece == null)
+            {
+                capturedPiece = ChessBoard.OutputPiece(EnPassant.Position);
+                Captured.Add(capturedPiece);
+            }
             return capturedPiece;
         }
         private void ReverseMove(Position origin, Position destiny, Piece piece)
@@ -200,9 +253,17 @@ namespace chessGame
             Piece p = ChessBoard.OutputPiece(destiny);
             ChessBoard.InputPiece(p, origin);
             p.decrementMove();
+
             if (piece != null)
             {
-                ChessBoard.InputPiece(piece, destiny);
+                if (p is Pawn && piece == EnPassant)
+                {
+                    ChessBoard.InputPiece(piece, EnPassant.Position);
+                }
+                else
+                {
+                    ChessBoard.InputPiece(piece, destiny);
+                }
                 Captured.Remove(piece);
             }
             //Special Move - Small Rock
@@ -214,7 +275,7 @@ namespace chessGame
                 pos.changeValues(origin.Line, origin.Colum + 3);
                 ChessBoard.InputPiece(t, pos);
             }
-            //Special Move - Small Rock
+            //Special Move - Big Rock
             if (p is King && destiny.Colum == origin.Colum - 2)
             {
                 Position pos = new Position(origin.Line, origin.Colum - 1);
@@ -222,6 +283,19 @@ namespace chessGame
                 t.decrementMove();
                 pos.changeValues(origin.Line, origin.Colum - 4);
                 ChessBoard.InputPiece(t, pos);
+            }
+        }
+        //Reverse Special Move Promotion
+        private void ReverseMove(Position origin, Position destiny, Piece pieceCaptured, Piece pieceUnPromove)
+        {
+            Piece p = ChessBoard.OutputPiece(destiny);
+            Pieces.Remove(p);
+            ChessBoard.InputPiece(pieceUnPromove,origin);
+            Pieces.Add(pieceUnPromove);
+            if (pieceCaptured != null)
+            {
+                ChessBoard.InputPiece(pieceCaptured, destiny);
+                Captured.Remove(pieceCaptured);
             }
         }
         private void ChangePlayer()
@@ -242,31 +316,31 @@ namespace chessGame
         }
         private void InputPieces()
         {
-            InputChessPiece(new Tower(ChessBoard, Color.White), 'a', 1);
-            InputChessPiece(new Knight(ChessBoard, Color.White), 'b', 1);
-            InputChessPiece(new Bishop(ChessBoard, Color.White), 'c', 1);
-            InputChessPiece(new Queen(ChessBoard, Color.White), 'd', 1);
-            InputChessPiece(new King(ChessBoard, Color.White,this), 'e', 1);
-            InputChessPiece(new Bishop(ChessBoard, Color.White), 'f', 1);
-            InputChessPiece(new Knight(ChessBoard, Color.White), 'g', 1);
-            InputChessPiece(new Tower(ChessBoard, Color.White), 'h', 1);
+            //InputChessPiece(new Tower(ChessBoard, Color.White), 'a', 1);
+            //InputChessPiece(new Knight(ChessBoard, Color.White), 'b', 1);
+            //InputChessPiece(new Bishop(ChessBoard, Color.White), 'c', 1);
+            //InputChessPiece(new Queen(ChessBoard, Color.White), 'd', 1);
+            InputChessPiece(new King(ChessBoard, Color.White, this), 'e', 4);
+            //InputChessPiece(new Bishop(ChessBoard, Color.White), 'f', 1);
+            //InputChessPiece(new Knight(ChessBoard, Color.White), 'g', 1);
+            //InputChessPiece(new Tower(ChessBoard, Color.White), 'h', 1);
             for (char i = 'a'; i <= 'h'; i++)
             {
-                InputChessPiece(new Pawn(ChessBoard, Color.White), i, 2);
+                InputChessPiece(new Pawn(ChessBoard, Color.White, this), i, 7);
             }
 
-            InputChessPiece(new Tower(ChessBoard, Color.Black), 'a', 8);
-            InputChessPiece(new Knight(ChessBoard, Color.Black), 'b', 8);
-            InputChessPiece(new Bishop(ChessBoard, Color.Black), 'c', 8);
-            InputChessPiece(new Queen(ChessBoard, Color.Black), 'd', 8);
-            InputChessPiece(new King(ChessBoard, Color.Black,this), 'e', 8);
-            InputChessPiece(new Bishop(ChessBoard, Color.Black), 'f', 8);
-            InputChessPiece(new Knight(ChessBoard, Color.Black), 'g', 8);
-            InputChessPiece(new Tower(ChessBoard, Color.Black), 'h', 8);
+            //InputChessPiece(new Tower(ChessBoard, Color.Black), 'a', 8);
+            //InputChessPiece(new Knight(ChessBoard, Color.Black), 'b', 8);
+            //InputChessPiece(new Bishop(ChessBoard, Color.Black), 'c', 8);
+            //InputChessPiece(new Queen(ChessBoard, Color.Black), 'd', 8);
+            InputChessPiece(new King(ChessBoard, Color.Black, this), 'e', 6);
+            //InputChessPiece(new Bishop(ChessBoard, Color.Black), 'f', 8);
+            //InputChessPiece(new Knight(ChessBoard, Color.Black), 'g', 8);
+            //InputChessPiece(new Tower(ChessBoard, Color.Black), 'h', 8);
 
             for (char i = 'a'; i <= 'h'; i++)
             {
-                InputChessPiece(new Pawn(ChessBoard, Color.Black), i, 7);
+                InputChessPiece(new Pawn(ChessBoard, Color.Black, this), i, 3);
             }
         }
     }
